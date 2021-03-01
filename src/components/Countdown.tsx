@@ -1,11 +1,15 @@
 import { stringify } from 'querystring';
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useContext } from 'react'
+import { ChallengeContext } from '../contexts/ChallengeContext';
 import styles from '../styles/components/Countdown.module.css'
 
 //useEffect roda 1' mesmo após o isActive se tornar false
 let coutdownTimeout: NodeJS.Timeout;
 
 export function Countdown() {
+  //Contex API implementada no ChallengeContext e envolta da aplicação para todos os
+  //componentes terem acesso
+  const { startNewChallenge } = useContext(ChallengeContext)
   //estado para quando o time chegar em 0'
   const [hasFinished, setHasFinished] = useState(false);
 
@@ -36,6 +40,7 @@ export function Countdown() {
   //o countdown precisa voltar em 25'' quando o ciclo for interrompido 
   function resetCountdown() {
     clearTimeout(coutdownTimeout);
+    setHasFinished(true);
     setIsActive(false);
     setTime(25 * 60);
   }
@@ -51,6 +56,7 @@ export function Countdown() {
     } else if (isActive && time === 0) {
       setHasFinished(true);
       setIsActive(false);
+      startNewChallenge();
     }
   }, [isActive, time])
 
